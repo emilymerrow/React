@@ -1,13 +1,18 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react';
 
 import './App.css'
-import Form from './Form/Form'
-import GiphyImage from './GiphyImage/GiphyImage'
+import Form from './Form/Form';
+import GiphyImage from './GiphyImage/GiphyImage';
+import FavoriteList from './FavoriteList/FavoriteList';
 
 function App() {
 
-  const [image, setImage] = useState('')
+  const [image, setImage] = useState('');
+  const [favorites, setFavorites] = useState([]);
+  const [showFavorites, setShowFavorites] = useState(false);
   const [search, setSearch] = useState('butterfly')
+
+
 
  async function fetchNewData() {
     const url = "https://api.giphy.com/v1/gifs/random?api_key=6m9yKGbrSvyFYTQ7NgH6diPXJkRWu2m3&tag=&rating=g"
@@ -46,15 +51,41 @@ useEffect(() => {
   fetchData()
 }, [])
 
-  
-  return (
-    <>
-      <h1>Giphy</h1>
-      <Form  searchGif={searchGif} />
-      < br/>
-      <GiphyImage image={image} changeImage={changeImage} />
-    </>
-  )
+function addToFavorites(gifUrl) {
+  setFavorites([...favorites, gifUrl]);
 }
 
-export default App
+function toggleFavorites() {
+  setShowFavorites(!showFavorites);
+}
+
+  return (
+    <>
+          <div className="container">
+      <h1>Giphy</h1>
+      <Form searchGif={searchGif} />
+      <br />
+      <button onClick={toggleFavorites}>
+        {showFavorites ? 'Show Random Giphy' : 'Show Favorites'}
+      </button>
+      {showFavorites ? (
+        <div className="favorite-list">
+          <FavoriteList favorites={favorites} />
+        </div>
+      ) : (
+        <div className="giphy-container">
+          <GiphyImage
+            image={image}
+            changeImage={changeImage}
+            addToFavorites={addToFavorites}
+          />
+        </div>
+      )}
+    </div>
+
+
+    </>
+  );
+}
+
+export default App;
